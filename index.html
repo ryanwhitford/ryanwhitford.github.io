@@ -24,33 +24,39 @@
      noticeably faster. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Caveat:wght@500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
 /* ─────────────────────────────────────────────────────────
    1. PALETTES — six options, switched by data-theme on <html>
    ───────────────────────────────────────────────────────── */
 [data-theme="cyanotype"]{
+  --grid-strong:rgba(143,198,234,.12); --grid-faint:rgba(143,198,234,.05);
   --bg:#0E2E52; --surface:#12385F; --ink:#EAF0F6; --ink-soft:#A8C0D6;
   --line:rgba(234,240,246,.18); --accent:#8FC6EA; --accent-2:#F0D9A8;
 }
 [data-theme="blackboard"]{
+  --grid-strong:rgba(239,237,227,.08); --grid-faint:rgba(239,237,227,.035);
   --bg:#16261F; --surface:#1C2F26; --ink:#EFEDE3; --ink-soft:#A8B8AC;
   --line:rgba(239,237,227,.16); --accent:#E9C46A; --accent-2:#9DBFA8;
 }
 [data-theme="riso"]{
+  --grid-strong:rgba(43,68,199,.07); --grid-faint:rgba(43,68,199,.03);
   --bg:#F6F3EC; --surface:#FFFFFF; --ink:#1C1A19; --ink-soft:#6A6560;
   --line:rgba(28,26,25,.16); --accent:#2B44C7; --accent-2:#EF3E7A;
 }
 [data-theme="plaster"]{
+  --grid-strong:rgba(42,36,32,.07); --grid-faint:rgba(42,36,32,.03);
   --bg:#E7E1D6; --surface:#F1ECE3; --ink:#2A2420; --ink-soft:#6B6058;
   --line:rgba(42,36,32,.18); --accent:#7A2E2A; --accent-2:#4C5B5C;
 }
 [data-theme="vacuum"]{
+  --grid-strong:rgba(138,127,208,.11); --grid-faint:rgba(138,127,208,.045);
   --bg:#120E1B; --surface:#191428; --ink:#E6E1EE; --ink-soft:#9990AE;
   --line:rgba(230,225,238,.15); --accent:#F2A65A; --accent-2:#8A7FD0;
 }
 [data-theme="fieldnotes"]{
+  --grid-strong:rgba(47,107,79,.07); --grid-faint:rgba(47,107,79,.03);
   --bg:#FAF9F5; --surface:#FFFFFF; --ink:#1A1D1A; --ink-soft:#66706A;
   --line:rgba(26,29,26,.15); --accent:#2F6B4F; --accent-2:#A8763E;
 }
@@ -89,6 +95,14 @@ body{
   font-family:var(--body); font-size:clamp(1rem,.96rem + .18vw,1.075rem);
   line-height:var(--lh); font-synthesis-weight:none;
   -webkit-font-smoothing:antialiased;
+  /* blueprint sheet: a 24px minor grid under a 120px major grid */
+  background-image:
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px),
+    linear-gradient(var(--grid-faint) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-faint) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px;
+  background-position:-1px -1px;
 }
 h1,h2,h3{font-family:var(--display); font-weight:var(--display-w); line-height:1.1; margin:0}
 h1{font-size:clamp(2.4rem,1.6rem + 3.6vw,4.1rem); letter-spacing:-.02em}
@@ -129,8 +143,21 @@ section:first-of-type{border-top:0}
   [data-layout="margin"] .sec{display:grid; grid-template-columns:180px 1fr; gap:clamp(1.5rem,4vw,3.5rem); align-items:start}
   [data-layout="margin"] .sec-head{margin:0; position:sticky; top:3rem}
   [data-layout="margin"] .sec-head h2{font-size:1.05rem}
+  /* the narrow margin column has no room for a dimension line */
+  [data-layout="margin"] section.sec{border-top:1px solid var(--line)}
+  [data-layout="margin"] .dim{display:block}
+  [data-layout="margin"] .dim .rule{display:none}
+  [data-layout="margin"] .dim .span{display:block; margin-top:.4rem}
 }
 .sec-head{margin-bottom:2rem}
+.dim{display:flex; align-items:center; gap:.9rem}
+.dim h2{flex:none}
+.dim .rule{flex:1; min-width:2rem; height:1px; background:var(--accent); opacity:.55; position:relative}
+.dim .rule::before,.dim .rule::after{content:""; position:absolute; top:-5px; width:1px; height:11px; background:var(--accent)}
+.dim .rule::before{left:0} .dim .rule::after{right:0}
+.dim .span{flex:none; font-family:var(--mono); font-size:.72rem; color:var(--accent)}
+/* the dimension line replaces the hairline between sections */
+section.sec{border-top:0}
 .sec-note{color:var(--ink-soft); font-size:.88rem; margin-top:.35rem; max-width:24ch}
 
 /* ─────────────────────────────────────────────────────────
@@ -139,15 +166,20 @@ section:first-of-type{border-top:0}
 .hero{padding-top:clamp(2rem,6vw,4rem)}
 .hero-copy .lede{font-size:clamp(1.05rem,1rem + .35vw,1.25rem); color:var(--ink-soft); margin-top:1.1rem}
 .hero-copy .lede strong{color:var(--ink); font-weight:500}
+.hero-plate{position:relative; margin:clamp(1.75rem,4vw,2.75rem) 0 0}
 #lattice{
   display:block; width:100%; height:clamp(200px,32vw,320px);
-  margin-top:clamp(1.75rem,4vw,2.75rem);
   border:1px solid var(--line); border-radius:3px; background:var(--surface);
 }
+.crop{position:absolute; width:12px; height:12px; border:0 solid var(--accent-2); opacity:.85; pointer-events:none}
+.crop.tl{top:-8px; left:-8px; border-width:1px 0 0 1px}
+.crop.tr{top:-8px; right:-8px; border-width:1px 1px 0 0}
+.crop.bl{bottom:-8px; left:-8px; border-width:0 0 1px 1px}
+.crop.br{bottom:-8px; right:-8px; border-width:0 1px 1px 0}
 .hero-cap{
   font-family:var(--body); font-style:italic; font-size:clamp(.85rem,.82rem + .1vw,.95rem);
   color:var(--ink-soft); line-height:1.55; letter-spacing:0;
-  margin-top:.75rem; max-width:none;
+  margin-top:1rem; max-width:none;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -170,6 +202,44 @@ section:first-of-type{border-top:0}
 .stack span{border:1px solid var(--line); padding:.15rem .45rem; border-radius:2px; color:var(--ink-soft)}
 .project-meta{font-family:var(--mono); font-size:.75rem; color:var(--ink-soft)}
 .status{color:var(--accent-2)}
+
+/* figure plates (Work) */
+.plates{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));
+  gap:1px; background:var(--line); border:1px solid var(--line); border-radius:3px; overflow:hidden;
+}
+.plate{background:var(--surface); padding:1rem 1rem 1.15rem; display:flex; flex-direction:column; margin:0}
+.plate canvas,.plate img{
+  display:block; width:100%; height:150px; object-fit:cover;
+  border:1px solid var(--line); border-radius:2px; background:var(--bg);
+}
+.fig{font-family:var(--mono); font-size:.7rem; color:var(--ink-soft); margin:.5rem 0 .8rem; line-height:1.45}
+.plate-head{display:flex; justify-content:space-between; align-items:baseline; gap:1rem}
+.plate-head .yr{font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); flex:none}
+.plate h3 a{border-bottom:1px solid var(--accent); padding-bottom:1px}
+.plate h3 a:hover{background:var(--accent); color:var(--bg); border-bottom-color:transparent}
+.plate p{color:var(--ink-soft); font-size:.93rem; margin:.4rem 0 .8rem}
+.plate .stack{margin-top:auto}
+.stack .more{
+  font:inherit; color:var(--accent); background:none; cursor:pointer;
+  border:1px dashed var(--accent); padding:.15rem .45rem; border-radius:2px;
+}
+.stack .more:hover{background:var(--accent); color:var(--bg)}
+
+/* timeline (Research) */
+.timeline{list-style:none; margin:0; padding:0; position:relative}
+.timeline::before{content:""; position:absolute; left:7px; top:.5rem; bottom:.5rem; width:1px; background:var(--line)}
+.tl-item{position:relative; padding-left:2.2rem; padding-bottom:2.2rem}
+.tl-item:last-child{padding-bottom:0}
+.node{position:absolute; left:0; top:.3rem; width:15px; height:15px; border-radius:50%; border:1px solid var(--accent); background:var(--bg)}
+.tl-item.now .node{background:var(--accent-2); border-color:var(--accent-2); box-shadow:0 0 0 4px color-mix(in srgb,var(--accent-2) 22%,transparent)}
+.when{font-family:var(--mono); font-size:.75rem; color:var(--accent-2)}
+.tl-body{display:flex; flex-wrap:wrap; gap:1rem 1.75rem; align-items:flex-start; margin-top:.3rem}
+.tl-text{flex:1 1 300px; min-width:0}
+.tl-text p{color:var(--ink-soft); font-size:.96rem; margin:.4rem 0 .7rem}
+.tl-fig{flex:0 1 220px; margin:0}
+.tl-fig canvas{display:block; width:100%; height:130px; border:1px solid var(--line); border-radius:2px; background:var(--surface)}
+.tl-fig figcaption{font-family:var(--mono); font-size:.68rem; color:var(--ink-soft); margin-top:.4rem; line-height:1.45}
 
 /* ─────────────────────────────────────────────────────────
    7. WRITING / OFF-HOURS / CONTACT
@@ -219,51 +289,66 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
         <h1>I build models that learn from physical data.</h1>
         <p class="lede">Final-year physics undergraduate at <strong>UCLA</strong>, with experience in machine learning and computational physics. Currently looking for <strong>machine learning engineering</strong> roles.</p>
       </div>
-      <canvas id="lattice" aria-hidden="true"></canvas>
+      <figure class="hero-plate" id="hero-plate">
+        <canvas id="lattice" aria-hidden="true"></canvas>
+        <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      </figure>
       <p class="hero-cap" id="hero-cap">The kagome lattice — the geometric structure underlying the superconducting AV₃Sb₅ family. I am currently using machine learning techniques to investigate the factors that determine the strength of superconductivity in these materials.</p>
     </section>
 
-    <!-- WORK -->
+    <!-- WORK
+         Each plate draws a generated figure from data-fig. To use a real plot
+         instead, replace the <canvas> with <img src="..." alt="..."> — the
+         styling is shared. Chips: the first four show, the rest fold behind
+         a "+N more" button (set data-show on .stack to change the count). -->
     <section id="work" class="sec">
-      <div class="sec-head">
-        <h2>Work</h2>
+      <div class="sec-head dim">
+        <h2>Work</h2><span class="rule" aria-hidden="true"></span><span class="span">4 projects, 2026</span>
       </div>
-      <div class="projects">
+      <div class="plates">
 
-        <article class="project">
-          <div>
+        <article class="plate">
+          <canvas data-fig="bdt" role="img" aria-label="Classifier score histograms for signal and background with a cut line"></canvas>
+          <div class="fig">Fig. 1 · classifier score, four-top signal vs tt̄+X background</div>
+          <div class="plate-head">
             <h3><a href="https://github.com/ryanwhitford/4top-event-classifier">Four-top event classifier</a></h3>
-            <p>Separating rare four-top-quark production from the ttbar+boson backgrounds that survive the same-sign preselection, using a hand-engineered 70-feature physics set and tree ensembles — decision tree through tuned gradient boosting, evaluated end-to-end on 302k simulated LHC events, then served as a live prediction API on Azure with a GitHub Actions CI/CD pipeline and per-request drift monitoring.</p>
-            <div class="stack"><span>Python</span><span>scikit-learn</span><span>pandas</span><span>NumPy</span><span>Matplotlib</span><span>Jupyter</span><span>Decision Trees</span><span>Random Forests</span><span>Gradient Boosting</span><span>Feature Engineering</span><span>Hyperparameter Optimization</span><span>Permutation Importance</span><span>FastAPI</span><span>Docker</span><span>Azure</span><span>GitHub Actions</span><span>CI/CD</span><span>Bicep</span><span>pytest</span><span>Git</span></div>
+            <span class="yr">2026</span>
           </div>
-          <div class="project-meta">2026</div>
+          <p>Gradient-boosted trees on 70 engineered physics features pick rare four-top-quark events out of 302k simulated LHC collisions, served as a live Azure API with CI/CD and per-request drift monitoring.</p>
+          <div class="stack"><span>Gradient Boosting</span><span>scikit-learn</span><span>FastAPI</span><span>Azure</span><span>Python</span><span>pandas</span><span>NumPy</span><span>Matplotlib</span><span>Jupyter</span><span>Decision Trees</span><span>Random Forests</span><span>Feature Engineering</span><span>Hyperparameter Optimization</span><span>Permutation Importance</span><span>Docker</span><span>GitHub Actions</span><span>CI/CD</span><span>Bicep</span><span>pytest</span><span>Git</span></div>
         </article>
 
-        <article class="project">
-          <div>
+        <article class="plate">
+          <canvas data-fig="latex" role="img" aria-label="Handwritten integral with per-symbol detection boxes and the LaTeX output"></canvas>
+          <div class="fig">Fig. 2 · per-symbol detection, then LaTeX</div>
+          <div class="plate-head">
             <h3><a href="https://github.com/ryanwhitford/LaTeXVision">LaTeXVision</a></h3>
-            <p>Turning handwritten mathematical expressions into structured LaTeX using a CNN symbol classifier and a deterministic spatial-relationship engine, trained on a 25-class HASYv2 subset, then served as a FastAPI backend behind two browser frontends — single-symbol testing and full multi-symbol expression recognition with a live detection overlay — backed by 52 tests and GitHub Actions CI.</p>
-            <div class="stack"><span>Python</span><span>PyTorch</span><span>OpenCV</span><span>NumPy</span><span>pandas</span><span>scikit-learn</span><span>Matplotlib</span><span>CNN</span><span>Data Augmentation</span><span>FastAPI</span><span>Pydantic</span><span>JavaScript</span><span>HTML5 Canvas</span><span>MathJax</span><span>pytest</span><span>GitHub Actions</span><span>CI/CD</span><span>Git</span></div>
+            <span class="yr">2026</span>
           </div>
-          <div class="project-meta">2026</div>
+          <p>A CNN symbol classifier and a spatial-relationship engine turn handwritten math into LaTeX, served through FastAPI to browser frontends with a live detection overlay and 52 tests in CI.</p>
+          <div class="stack"><span>PyTorch</span><span>CNN</span><span>OpenCV</span><span>FastAPI</span><span>Python</span><span>NumPy</span><span>pandas</span><span>scikit-learn</span><span>Matplotlib</span><span>Data Augmentation</span><span>Pydantic</span><span>JavaScript</span><span>HTML5 Canvas</span><span>MathJax</span><span>pytest</span><span>GitHub Actions</span><span>CI/CD</span><span>Git</span></div>
         </article>
 
-        <article class="project">
-          <div>
-            <h3><a href="https://github.com/ryanwhitford/schrodinger-pinn-benchmark">Physics-Informed Neural Networks</a></h3>
-            <p>Investigated the strengths and weaknesses of Physics-Informed Neural Networks (PINNs), applying them to the Schrödinger equation as a test case.</p>
-            <div class="stack"><span>Python</span><span>PyTorch</span><span>NumPy</span><span>SciPy</span><span>MatPlotLib</span><span>Neural Networks</span><span>Quantum Mechanics</span><span>Numerical Methods</span><span>Jupyter</span><span>Docker</span><span>Git</span></div>
+        <article class="plate">
+          <canvas data-fig="pinn" role="img" aria-label="PINN probability density against the exact solution, with collocation points"></canvas>
+          <div class="fig">Fig. 3 · |ψ₁(x)|², PINN (solid) vs exact (dashed)</div>
+          <div class="plate-head">
+            <h3><a href="https://github.com/ryanwhitford/schrodinger-pinn-benchmark">Physics-informed neural networks</a></h3>
+            <span class="yr">2026</span>
           </div>
-          <div class="project-meta">2026</div>
+          <p>Where physics-informed neural networks hold up and where they break down, benchmarked on the Schrödinger equation.</p>
+          <div class="stack"><span>PyTorch</span><span>Neural Networks</span><span>Quantum Mechanics</span><span>SciPy</span><span>Python</span><span>NumPy</span><span>Matplotlib</span><span>Numerical Methods</span><span>Jupyter</span><span>Docker</span><span>Git</span></div>
         </article>
 
-        <article class="project">
-          <div>
-            <h3><a href="https://github.com/ryanwhitford/climate-change-gaussian-processes">Forecasting atmospheric CO₂ with Gaussian processes</a></h3>
-            <p>A Gaussian process regression model forecasting atmospheric CO₂ concentration from NOAA's Mauna Loa observatory record, built around a fine-tuned four-component kernel and used to test for a detectable signature from the 2020 emissions slowdown.</p>
-            <div class="stack"><span>Python</span><span>scikit-learn</span><span>Gaussian Processes</span><span>NumPy</span><span>pandas</span><span>Matplotlib</span><span>Jupyter</span><span>Docker</span><span>Git</span></div>
+        <article class="plate">
+          <canvas data-fig="co2" role="img" aria-label="Atmospheric CO2 record with a Gaussian process forecast and uncertainty band"></canvas>
+          <div class="fig">Fig. 4 · Mauna Loa CO₂ with GP forecast and 95% band</div>
+          <div class="plate-head">
+            <h3><a href="https://github.com/ryanwhitford/climate-change-gaussian-processes">Forecasting atmospheric CO₂</a></h3>
+            <span class="yr">2026</span>
           </div>
-          <div class="project-meta">2026</div>
+          <p>Gaussian process regression with a fine-tuned four-component kernel forecasts NOAA's Mauna Loa CO₂ record and tests for a detectable signature of the 2020 emissions slowdown.</p>
+          <div class="stack"><span>Gaussian Processes</span><span>scikit-learn</span><span>pandas</span><span>NumPy</span><span>Python</span><span>Matplotlib</span><span>Jupyter</span><span>Docker</span><span>Git</span></div>
         </article>
 
       </div>
@@ -271,36 +356,50 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
 
     <!-- RESEARCH -->
     <section id="research" class="sec">
-      <div class="sec-head">
-        <h2>Research</h2>
+      <div class="sec-head dim">
+        <h2>Research</h2><span class="rule" aria-hidden="true"></span><span class="span">2024 – present</span>
       </div>
-      <div class="projects">
+      <ol class="timeline">
 
-        <article class="project">
-          <div>
-            <h3>Predicting T<sub>c</sub> in kagome superconductors</h3>
-            <p>Exploring machine learning methods to understand how defects influence the critical temperature of kagome superconductors. Currently developing LLM-driven pipelines to generate and validate physics-informed regression forms using a small experimental dataset for verification.</p>
-            <div class="stack"><span>Python</span><span>Solid-State Physics</span><span>LLMs</span><span>Decision Trees</span><span>Gaussian Processes</span></div>
+        <li class="tl-item now">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when">May 2026 – present, QMIND Lab, UCLA</div>
+          <div class="tl-body">
+            <div class="tl-text">
+              <h3>Predicting T<sub>c</sub> in kagome superconductors</h3>
+              <p>Exploring machine learning methods to understand how defects influence the critical temperature of kagome superconductors. Currently developing LLM-driven pipelines to generate and validate physics-informed regression forms using a small experimental dataset for verification.</p>
+              <div class="stack"><span>Python</span><span>Solid-State Physics</span><span>LLMs</span><span>Decision Trees</span><span>Gaussian Processes</span></div>
+            </div>
+            <figure class="tl-fig">
+              <canvas data-fig="defects" role="img" aria-label="Kagome lattice patch with a vacancy and a substitution marked"></canvas>
+              <figcaption>Fig. 5 · point defects in a kagome net</figcaption>
+            </figure>
           </div>
-          <div class="project-meta">QMIND Lab, UCLA<br>May 2026 – Present</div>
-        </article>
+        </li>
 
-        <article class="project">
-          <div>
-            <h3>Diffractive Deep Neural Network Optimization</h3>
-            <p>Tested optimization methods for an optical neural network alternative that makes predictions at the speed of light. Presented our findings at the UCLA CNSI Undergraduate Research Symposium.</p>
-            <div class="stack"><span>PyTorch</span><span>NumPy</span><span>Neural Networks</span><span>Optics</span></div>
+        <li class="tl-item">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when">September 2024 – June 2025, Ozcan Lab, UCLA</div>
+          <div class="tl-body">
+            <div class="tl-text">
+              <h3>Diffractive deep neural network optimization</h3>
+              <p>Tested optimization methods for an optical neural network alternative that makes predictions at the speed of light. Presented our findings at the UCLA CNSI Undergraduate Research Symposium.</p>
+              <div class="stack"><span>PyTorch</span><span>NumPy</span><span>Neural Networks</span><span>Optics</span></div>
+            </div>
+            <figure class="tl-fig">
+              <canvas data-fig="d2nn" role="img" aria-label="Light passing through stacked diffractive layers to a detector"></canvas>
+              <figcaption>Fig. 6 · light through stacked diffractive layers</figcaption>
+            </figure>
           </div>
-          <div class="project-meta">Ozcan Lab, UCLA<br>September 2024 – June 2025</div>
-        </article>
+        </li>
 
-      </div>
+      </ol>
     </section>
 
     <!-- CONTACT -->
     <section id="contact" class="sec">
-      <div class="sec-head">
-        <h2>Get in touch</h2>
+      <div class="sec-head dim">
+        <h2>Get in touch</h2><span class="rule" aria-hidden="true"></span>
       </div>
       <div>
         <p>Open to machine learning engineering roles and internships starting 2027, and happy to talk about anything above.</p>
@@ -312,7 +411,7 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
       </div>
     </section>
 
-    <footer>Last updated August 2026.</footer>
+    <footer>Last updated September 2026.</footer>
 
   </main>
 </div>
@@ -328,7 +427,7 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
   var W = 0, H = 0, t = 0, raf = null;
 
   var CAPTIONS = {
-    kagome:   'The kagome lattice — the geometric structure underlying the superconducting AV\u2083Sb\u2085 family. I am currently using machine learning techniques to investigate the factors that determine the strength of superconductivity in these materials.',
+    kagome:   'The kagome lattice — the geometric structure underlying the superconducting AV₃Sb₅ family. I am currently using machine learning techniques to investigate the factors that determine the strength of superconductivity in these materials.',
     event:    'a collider event — charged tracks bending in a magnetic field',
     boundary: 'a decision tree carving up feature space, one axis-aligned cut at a time',
     none:     ''
@@ -496,6 +595,7 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
   function start(){
     var mode = root.getAttribute('data-hero');
     canvas.style.display = mode === 'none' ? 'none' : 'block';
+    document.getElementById('hero-plate').style.display = mode === 'none' ? 'none' : '';
     cap.textContent = CAPTIONS[mode] || '';
     if (mode === 'none') return;
     cancelAnimationFrame(raf); t = 0; resize();
@@ -504,6 +604,200 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
 
   window.addEventListener('resize', function(){ resize(); draw(); });
   start();
+})();
+</script>
+<script>
+/* ─────────────────────────────────────────────────────────
+   Figure plates and chip folding.
+   Figures are schematic and redraw from the theme's colors, so
+   they follow data-theme changes. Swap any <canvas data-fig> for an
+   <img> of a real results plot and it simply stops being drawn.
+   ───────────────────────────────────────────────────────── */
+(function(){
+  var root = document.documentElement;
+
+  /* chips: show the first N (default 4) when there are more than N + 2 */
+  document.querySelectorAll('.plate .stack').forEach(function(stack){
+    var n = parseInt(stack.getAttribute('data-show') || '4', 10);
+    var chips = Array.prototype.slice.call(stack.querySelectorAll('span'));
+    if (chips.length <= n + 2) return;
+    var extra = chips.slice(n);
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'more';
+    function set(open){
+      extra.forEach(function(c){ c.hidden = !open; });
+      btn.textContent = open ? 'Show less' : '+' + extra.length + ' more';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function(){ set(btn.getAttribute('aria-expanded') !== 'true'); });
+    stack.appendChild(btn); set(false);
+  });
+
+  function css(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+  function rgba(hex, a){
+    var h = hex.replace('#',''); if (h.length === 3) h = h.split('').map(function(c){ return c + c; }).join('');
+    var v = parseInt(h, 16); return 'rgba(' + ((v>>16)&255) + ',' + ((v>>8)&255) + ',' + (v&255) + ',' + a + ')';
+  }
+  function setup(el){
+    var r = el.getBoundingClientRect(); if (!r.width) return null;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    el.width = r.width * dpr; el.height = r.height * dpr;
+    var ctx = el.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { ctx: ctx, W: r.width, H: r.height };
+  }
+  var C;
+  function axes(ctx, W, H, p){
+    ctx.strokeStyle = rgba(C.ink, .35); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(p, H-p); ctx.lineTo(W-p, H-p); ctx.moveTo(p, p*.6); ctx.lineTo(p, H-p); ctx.stroke();
+  }
+  function label(ctx, txt, x, y, col, align){
+    ctx.font = '500 10px ' + C.mono; ctx.fillStyle = col; ctx.textAlign = align || 'left'; ctx.fillText(txt, x, y);
+  }
+  function gauss(x, m, s){ return Math.exp(-(x-m)*(x-m)/(2*s*s)); }
+  function dashed(ctx, x0, y0, x1, y1){
+    ctx.setLineDash([4,3]); ctx.strokeStyle = rgba(C.ink, .6); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  var FIGS = {
+    bdt: function(ctx, W, H){
+      var p = 18, n = 32, bw = (W-2*p)/n; axes(ctx, W, H, p);
+      function hist(m, s, col, sc){
+        ctx.beginPath(); ctx.moveTo(p, H-p);
+        for (var i = 0; i < n; i++){
+          var y = (H-2*p)*.92*sc*gauss((i+.5)/n, m, s)*(1 + .08*Math.sin(i*2.1));
+          ctx.lineTo(p+i*bw, H-p-y); ctx.lineTo(p+(i+1)*bw, H-p-y);
+        }
+        ctx.lineTo(W-p, H-p); ctx.closePath();
+        ctx.fillStyle = rgba(col, .2); ctx.fill(); ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.stroke();
+      }
+      hist(.3, .13, C.acc, 1); hist(.74, .1, C.acc2, .72);
+      var cx = p + (W-2*p)*.6; dashed(ctx, cx, p*.6, cx, H-p);
+      label(ctx, 'cut', cx+4, p+4, C.ink);
+      label(ctx, 'background', p+(W-2*p)*.18, H-p-(H-2*p)*.95, C.acc, 'center');
+      label(ctx, 'signal', p+(W-2*p)*.8, H-p-(H-2*p)*.75, C.acc2, 'center');
+    },
+
+    latex: function(ctx, W, H){
+      var g = [['∫','int',64,0],['x','x',44,0],['2','2',26,-18],['+','+',38,0],['1','1',44,0],['d','d',44,0],['x','x',44,0]];
+      var gap = 10, total = 0, w = [];
+      g.forEach(function(q){ ctx.font = '500 '+q[2]+'px Caveat, cursive'; var m = ctx.measureText(q[0]).width; w.push(m); total += m + gap; });
+      var sc = Math.min(1, (W-40)/total), base = H*.56;
+      ctx.save(); ctx.translate((W - total*sc)/2, 0); ctx.scale(sc, 1);
+      var x = 0;
+      g.forEach(function(q, i){
+        var y = base + q[3], top = y - q[2]*.72, col = i === 2 ? C.acc2 : C.acc;
+        ctx.font = '500 '+q[2]+'px Caveat, cursive'; ctx.fillStyle = C.ink; ctx.textAlign = 'left'; ctx.fillText(q[0], x, y);
+        ctx.setLineDash([3,2]); ctx.strokeStyle = col; ctx.lineWidth = 1/sc; ctx.strokeRect(x-3, top, w[i]+6, q[2]*.9); ctx.setLineDash([]);
+        ctx.font = '500 9px ' + C.mono; ctx.fillStyle = col; ctx.fillText(q[1], x-2, top-4);
+        x += w[i] + gap;
+      });
+      ctx.restore();
+      ctx.font = '500 12px ' + C.mono; ctx.fillStyle = C.acc2; ctx.textAlign = 'center';
+      ctx.fillText('\\int x^{2} + 1 \\, dx', W/2, H-14);
+    },
+
+    pinn: function(ctx, W, H){
+      var p = 18; axes(ctx, W, H, p);
+      function X(x){ return p + (x+4)/8*(W-2*p); }
+      function Y(y){ return H-p - y*(H-2*p)*.88; }
+      function exact(x){ return x*x*Math.exp(-x*x)/0.3679; }
+      ctx.setLineDash([4,3]); ctx.strokeStyle = C.soft; ctx.lineWidth = 1.2; ctx.beginPath();
+      for (var i = 0; i <= 200; i++){ var x = -4+8*i/200; i ? ctx.lineTo(X(x), Y(exact(x))) : ctx.moveTo(X(x), Y(exact(x))); }
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = C.acc; ctx.lineWidth = 1.6; ctx.beginPath();
+      for (var k = 0; k <= 200; k++){ var x2 = -4+8*k/200, y2 = exact(x2) + .06*Math.sin(2.6*x2)*Math.exp(-x2*x2/5);
+        k ? ctx.lineTo(X(x2), Y(y2)) : ctx.moveTo(X(x2), Y(y2)); }
+      ctx.stroke();
+      ctx.fillStyle = C.acc2;
+      for (var c = 0; c < 34; c++){ var xc = -3.8 + 7.6*((c*.618)%1); ctx.beginPath(); ctx.arc(X(xc), H-p-4, 1.6, 0, 6.284); ctx.fill(); }
+      label(ctx, 'collocation points', W-p, H-p-10, C.acc2, 'right');
+    },
+
+    co2: function(ctx, W, H){
+      var p = 18, y0 = 2000, y1 = 2032, split = 2024; axes(ctx, W, H, p);
+      function f(yr){ var d = yr-y0; return 369 + 1.9*d + .012*d*d; }
+      function X(yr){ return p + (yr-y0)/(y1-y0)*(W-2*p); }
+      function Y(v){ return H-p - (v-362)/(460-362)*(H-2*p); }
+      ctx.beginPath();
+      for (var i = 0; i <= 80; i++){ var a = split+(y1-split)*i/80; ctx.lineTo(X(a), Y(f(a) + 4.2 + 2.2*Math.sqrt(a-split))); }
+      for (var j = 80; j >= 0; j--){ var b = split+(y1-split)*j/80; ctx.lineTo(X(b), Y(f(b) - 4.2 - 2.2*Math.sqrt(b-split))); }
+      ctx.closePath(); ctx.fillStyle = rgba(C.acc2, .22); ctx.fill();
+      ctx.fillStyle = C.soft;
+      for (var m = 0; m < (split-y0)*12; m += 2){ var yr = y0+m/12; ctx.beginPath(); ctx.arc(X(yr), Y(f(yr)+3*Math.sin(2*Math.PI*yr)), 1.1, 0, 6.284); ctx.fill(); }
+      ctx.strokeStyle = C.acc; ctx.lineWidth = 1.5; ctx.beginPath();
+      for (var k = 0; k <= 400; k++){ var t = y0+(y1-y0)*k/400, v = f(t)+3*Math.sin(2*Math.PI*t); k ? ctx.lineTo(X(t), Y(v)) : ctx.moveTo(X(t), Y(v)); }
+      ctx.stroke();
+      dashed(ctx, X(split), p*.6, X(split), H-p);
+      label(ctx, 'forecast', X(split)+4, p+4, C.acc2);
+    },
+
+    defects: function(ctx, W, H){
+      /* a patch of the kagome net (same medial construction as the hero) */
+      var s = 34, a2x = s*.5, a2y = s*.8660254, D = [[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+      var nodes = {}, bonds = [];
+      for (var j = -2; j <= Math.ceil(H/a2y)+2; j++){
+        for (var i = Math.floor(-j*a2x/s)-2; i <= Math.ceil((W-j*a2x)/s)+2; i++){
+          var cx = i*s + j*a2x, cy = j*a2y, v = [];
+          for (var k = 0; k < 6; k++){
+            var nx = (i+D[k][0])*s + (j+D[k][1])*a2x, ny = (j+D[k][1])*a2y;
+            var px = (cx+nx)/2, py = (cy+ny)/2; v.push([px,py]); nodes[Math.round(px*8)+'_'+Math.round(py*8)] = [px,py];
+          }
+          for (var e = 0; e < 6; e++) bonds.push([v[e], v[(e+1)%6]]);
+        }
+      }
+      ctx.beginPath(); bonds.forEach(function(b){ ctx.moveTo(b[0][0], b[0][1]); ctx.lineTo(b[1][0], b[1][1]); });
+      ctx.strokeStyle = rgba(C.ink, .3); ctx.lineWidth = 1; ctx.stroke();
+      var list = Object.keys(nodes).map(function(key){ return nodes[key]; });
+      function nearest(x, y){ var best = null, d = 1e9; list.forEach(function(q){ var dd = (q[0]-x)*(q[0]-x)+(q[1]-y)*(q[1]-y); if (dd < d){ d = dd; best = q; } }); return best; }
+      var vac = nearest(W*.3, H*.45), sub = nearest(W*.7, H*.55);
+      ctx.fillStyle = C.acc;
+      list.forEach(function(q){ if (q === vac || q === sub) return; ctx.beginPath(); ctx.arc(q[0], q[1], 2.6, 0, 6.284); ctx.fill(); });
+      ctx.fillStyle = C.surf; ctx.beginPath(); ctx.arc(vac[0], vac[1], 6, 0, 6.284); ctx.fill();
+      ctx.setLineDash([2,2]); ctx.strokeStyle = C.acc2; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(vac[0], vac[1], 5, 0, 6.284); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = C.acc2; ctx.beginPath(); ctx.arc(sub[0], sub[1], 4.8, 0, 6.284); ctx.fill();
+      ctx.strokeStyle = rgba(C.acc2, .45); ctx.beginPath(); ctx.arc(sub[0], sub[1], 9, 0, 6.284); ctx.stroke();
+      function tag(txt, q, dy){
+        ctx.font = '500 10px ' + C.mono; var tw = ctx.measureText(txt).width;
+        var x = Math.max(4, Math.min(W - tw - 8, q[0] - tw/2 - 3)), y = q[1] + dy;
+        ctx.fillStyle = rgba(C.surf, .85); ctx.fillRect(x, y-10, tw+6, 14);
+        ctx.fillStyle = C.acc2; ctx.textAlign = 'left'; ctx.fillText(txt, x+3, y);
+      }
+      tag('vacancy', vac, -12); tag('substitution', sub, 24);
+    },
+
+    d2nn: function(ctx, W, H){
+      var L = 4, gap = (W-40)/(L+1), rows = 14, rh = (H-28)/rows;
+      for (var l = 1; l <= L; l++){
+        for (var c = 0; c < rows; c++){
+          var ph = (Math.sin(c*1.7 + l*2.3) + 1)/2;
+          ctx.fillStyle = rgba(C.acc, (.15 + ph*.55).toFixed(2)); ctx.fillRect(20+gap*l-4, 14+c*rh, 8, rh-1);
+        }
+      }
+      ctx.strokeStyle = C.acc2; ctx.lineWidth = 1; ctx.globalAlpha = .6;
+      for (var r = 0; r < 7; r++){
+        ctx.beginPath(); ctx.moveTo(8, H/2 + (r-3)*6);
+        for (var k = 1; k <= L+1; k++){ ctx.lineTo(20+gap*k, H/2 + (r-3)*(6 + 5*Math.sin(k*1.3 + r))*(k === L+1 ? .15 : 1)); }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; ctx.fillStyle = C.acc2; ctx.beginPath(); ctx.arc(20+gap*(L+1), H/2, 3.5, 0, 6.284); ctx.fill();
+      label(ctx, 'detector', W-6, H/2-10, C.acc2, 'right');
+    }
+  };
+
+  function drawAll(){
+    C = { ink: css('--ink'), soft: css('--ink-soft'), acc: css('--accent'), acc2: css('--accent-2'),
+          surf: css('--surface'), mono: css('--mono') || 'monospace' };
+    document.querySelectorAll('canvas[data-fig]').forEach(function(el){
+      var fn = FIGS[el.getAttribute('data-fig')], o = fn && setup(el);
+      if (o) fn(o.ctx, o.W, o.H);
+    });
+  }
+
+  var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  ready.then(drawAll);
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+  new MutationObserver(drawAll).observe(root, { attributes: true, attributeFilter: ['data-theme','data-type','data-layout'] });
 })();
 </script>
 </body>
