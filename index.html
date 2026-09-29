@@ -320,19 +320,19 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
         </article>
 
         <article class="plate">
-          <canvas data-fig="latex" role="img" aria-label="Handwritten integral with per-symbol detection boxes and the LaTeX output"></canvas>
-          <div class="fig">Fig. 2 · per-symbol detection, then LaTeX</div>
+          <canvas data-fig="latex" role="img" aria-label="Handwritten fraction with the decoder's attention heatmap on the superscript and the decoded LaTeX tokens"></canvas>
+          <div class="fig">Fig. 2 · decoder attention while emitting the superscript 2</div>
           <div class="plate-head">
             <h3><a href="https://github.com/ryanwhitford/LaTeXVision">LaTeXVision</a></h3>
             <span class="yr">2026</span>
           </div>
-          <p>A CNN symbol classifier and a spatial-relationship engine turn handwritten math into LaTeX, served through FastAPI to browser frontends with a live detection overlay and 52 tests in CI.</p>
-          <div class="stack"><span>PyTorch</span><span>CNN</span><span>OpenCV</span><span>FastAPI</span><span>Python</span><span>NumPy</span><span>pandas</span><span>scikit-learn</span><span>Matplotlib</span><span>Data Augmentation</span><span>Pydantic</span><span>JavaScript</span><span>HTML5 Canvas</span><span>MathJax</span><span>pytest</span><span>GitHub Actions</span><span>CI/CD</span><span>Git</span></div>
+          <p>An image-to-LaTeX transformer reads handwritten math straight from the pixels, scripts and fractions included, exactly matching 51% of held-out human-written expressions, served through FastAPI with live attention heatmaps.</p>
+          <div class="stack"><span>Transformers</span><span>PyTorch</span><span>CNN</span><span>FastAPI</span><span>Python</span><span>NumPy</span><span>Computer Vision</span><span>Attention Mechanisms</span><span>Transfer Learning</span><span>Synthetic Data Generation</span><span>Data Augmentation</span><span>Tokenization</span><span>Model Evaluation</span><span>JavaScript</span><span>HTML5 Canvas</span><span>pytest</span><span>GitHub Actions</span><span>CI/CD</span><span>Git</span></div>
         </article>
 
         <article class="plate">
-          <canvas data-fig="pinn" role="img" aria-label="PINN probability density against the exact solution, with collocation points"></canvas>
-          <div class="fig">Fig. 3 · |ψ₁(x)|², PINN (solid) vs exact (dashed)</div>
+          <canvas data-fig="pinn" role="img" aria-label="PINN prediction of the Schrödinger equation's solution overlaid on the exact solution"></canvas>
+          <div class="fig">Fig. 3 · |ψ₁(x)|², harmonic oscillator first excited state</div>
           <div class="plate-head">
             <h3><a href="https://github.com/ryanwhitford/schrodinger-pinn-benchmark">Physics-informed neural networks</a></h3>
             <span class="yr">2026</span>
@@ -680,22 +680,35 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
     },
 
     latex: function(ctx, W, H){
-      var g = [['∫','int',64,0],['x','x',44,0],['2','2',26,-18],['+','+',38,0],['1','1',44,0],['d','d',44,0],['x','x',44,0]];
-      var gap = 10, total = 0, w = [];
-      g.forEach(function(q){ ctx.font = '500 '+q[2]+'px Caveat, cursive'; var m = ctx.measureText(q[0]).width; w.push(m); total += m + gap; });
-      var sc = Math.min(1, (W-40)/total), base = H*.56;
-      ctx.save(); ctx.translate((W - total*sc)/2, 0); ctx.scale(sc, 1);
-      var x = 0;
-      g.forEach(function(q, i){
-        var y = base + q[3], top = y - q[2]*.72, col = i === 2 ? C.acc2 : C.acc;
-        ctx.font = '500 '+q[2]+'px Caveat, cursive'; ctx.fillStyle = C.ink; ctx.textAlign = 'left'; ctx.fillText(q[0], x, y);
-        ctx.setLineDash([3,2]); ctx.strokeStyle = col; ctx.lineWidth = 1/sc; ctx.strokeRect(x-3, top, w[i]+6, q[2]*.9); ctx.setLineDash([]);
-        ctx.font = '500 9px ' + C.mono; ctx.fillStyle = col; ctx.fillText(q[1], x-2, top-4);
-        x += w[i] + gap;
+      /* handwritten \frac{4x^{2}}{5}, with the decoder's attention on the superscript */
+      var big = '500 40px Caveat, cursive', small = '500 24px Caveat, cursive';
+      var cx = W*.5, barY = H*.45, base = barY - 8;
+      ctx.font = big; var w4 = ctx.measureText('4').width, wx = ctx.measureText('x').width, w5 = ctx.measureText('5').width;
+      ctx.font = small; var w2 = ctx.measureText('2').width;
+      var numW = w4 + 4 + wx + 2 + w2, x0 = cx - numW/2, x2 = x0 + w4 + 4 + wx + 2, y2 = base - 24;
+      function heat(x, y, r, a){
+        var g = ctx.createRadialGradient(x, y, 1, x, y, r);
+        g.addColorStop(0, rgba(C.acc2, a)); g.addColorStop(1, rgba(C.acc2, 0));
+        ctx.fillStyle = g; ctx.fillRect(x-r, y-r, 2*r, 2*r);
+      }
+      heat(x2 + w2/2, y2 - 8, 28, .6); heat(x0 + w4 + 4 + wx/2, base - 10, 22, .18);
+      ctx.fillStyle = C.ink; ctx.textAlign = 'left';
+      ctx.font = big; ctx.fillText('4', x0, base); ctx.fillText('x', x0 + w4 + 4, base); ctx.fillText('5', cx - w5/2, barY + 36);
+      ctx.font = small; ctx.fillText('2', x2, y2);
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x0 - 8, barY); ctx.quadraticCurveTo(cx, barY + 3, x0 + numW + 8, barY - 1); ctx.stroke(); ctx.lineCap = 'butt';
+      label(ctx, 'attention', x2 + w2 + 14, y2 - 10, C.acc2);
+      var toks = ['\\frac','{','4','x','^','{','2','}','}','{','5','}'], active = 6, gap = 5, tw = [], total = -gap;
+      ctx.font = '500 11px ' + C.mono;
+      toks.forEach(function(t){ var m = ctx.measureText(t).width; tw.push(m); total += m + gap; });
+      var tx = (W - total)/2;
+      toks.forEach(function(t, i){
+        var structural = /^(\\frac|\{|\}|\^|_)$/.test(t);
+        ctx.fillStyle = i === active ? C.acc2 : structural ? C.soft : C.acc;
+        ctx.fillText(t, tx, H - 12);
+        if (i === active){ ctx.fillRect(tx - 1, H - 8, tw[i] + 2, 1); }
+        tx += tw[i] + gap;
       });
-      ctx.restore();
-      ctx.font = '500 12px ' + C.mono; ctx.fillStyle = C.acc2; ctx.textAlign = 'center';
-      ctx.fillText('\\int x^{2} + 1 \\, dx', W/2, H-14);
     },
 
     pinn: function(ctx, W, H){
@@ -710,9 +723,15 @@ footer{padding:2.5rem 0 4rem; color:var(--ink-soft); font-size:.8rem; font-famil
       for (var k = 0; k <= 200; k++){ var x2 = -4+8*k/200, y2 = exact(x2) + .06*Math.sin(2.6*x2)*Math.exp(-x2*x2/5);
         k ? ctx.lineTo(X(x2), Y(y2)) : ctx.moveTo(X(x2), Y(y2)); }
       ctx.stroke();
-      ctx.fillStyle = C.acc2;
-      for (var c = 0; c < 34; c++){ var xc = -3.8 + 7.6*((c*.618)%1); ctx.beginPath(); ctx.arc(X(xc), H-p-4, 1.6, 0, 6.284); ctx.fill(); }
-      label(ctx, 'collocation points', W-p, H-p-10, C.acc2, 'right');
+      label(ctx, 'Ĥψ = Eψ', p+8, p+6, C.soft);
+      ctx.font = '500 10px ' + C.mono;
+      var lx = W - p - 24 - ctx.measureText('PINN prediction').width;
+      ctx.setLineDash([4,3]); ctx.strokeStyle = C.soft; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(lx, p+2); ctx.lineTo(lx+18, p+2); ctx.stroke(); ctx.setLineDash([]);
+      label(ctx, 'Exact solution', lx+24, p+6, C.soft);
+      ctx.strokeStyle = C.acc; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(lx, p+18); ctx.lineTo(lx+18, p+18); ctx.stroke();
+      label(ctx, 'PINN prediction', lx+24, p+22, C.acc);
     },
 
     co2: function(ctx, W, H){
